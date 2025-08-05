@@ -18,11 +18,11 @@
     </div>
 
     <!-- Textarea -->
-    <div 
+    <div
       class="relative textarea-container"
       :class="{ 'border-red-300': !isValid && hasContent }"
       @dragover="handleDragOver"
-      @dragleave="handleDragLeave"  
+      @dragleave="handleDragLeave"
       @drop="handleDrop"
     >
       <textarea
@@ -32,15 +32,15 @@
         class="textarea-field"
         :class="[
           'min-h-[300px] w-full',
-          { 
+          {
             'border-red-300 focus:border-red-500 focus:ring-red-500': !isValid && hasContent,
-            'border-blue-400': isDragOver
-          }
+            'border-blue-400': isDragOver,
+          },
         ]"
         @input="handleInput"
         @paste="handlePaste"
       />
-      
+
       <!-- Drag overlay -->
       <div
         v-show="isDragOver"
@@ -73,7 +73,7 @@ import {
   DocumentTextIcon,
   TrashIcon,
   CloudArrowUpIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline'
 
 interface Props {
@@ -95,7 +95,7 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Paste or drop your JSON here...',
   isValid: true,
-  isEdited: false
+  isEdited: false,
 })
 
 const emit = defineEmits<Emits>()
@@ -104,7 +104,7 @@ const isDragOver = ref(false)
 
 const content = computed({
   get: () => props.modelValue,
-  set: (value: string) => emit('update:modelValue', value)
+  set: (value: string) => emit('update:modelValue', value),
 })
 
 const hasContent = computed(() => props.modelValue.trim() !== '')
@@ -140,10 +140,11 @@ function clearContent() {
 function handleDragOver(event: DragEvent) {
   event.preventDefault()
   event.stopPropagation()
-  
-  const hasFiles = event.dataTransfer?.items && 
-    Array.from(event.dataTransfer.items).some(item => item.kind === 'file')
-  
+
+  const hasFiles =
+    event.dataTransfer?.items &&
+    Array.from(event.dataTransfer.items).some((item) => item.kind === 'file')
+
   if (hasFiles) {
     isDragOver.value = true
   }
@@ -152,11 +153,11 @@ function handleDragOver(event: DragEvent) {
 function handleDragLeave(event: DragEvent) {
   event.preventDefault()
   event.stopPropagation()
-  
+
   const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
   const x = event.clientX
   const y = event.clientY
-  
+
   if (x < rect.left || x >= rect.right || y < rect.top || y >= rect.bottom) {
     isDragOver.value = false
   }
@@ -166,7 +167,7 @@ function handleDrop(event: DragEvent) {
   event.preventDefault()
   event.stopPropagation()
   isDragOver.value = false
-  
+
   const files = event.dataTransfer?.files
   if (files && files.length > 0) {
     const file = files[0]
@@ -192,18 +193,20 @@ function handleDrop(event: DragEvent) {
 
 <style scoped>
 .textarea-container {
-  @apply transition-all duration-300 ease-in-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .textarea-container:hover {
-  @apply transform -translate-y-0.5;
+  transform: translateY(-0.125rem);
 }
 
 .textarea-field {
-  @apply transition-all duration-200;
+  transition: all 0.2s;
 }
 
 .textarea-field:focus {
-  @apply shadow-lg;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 </style>
