@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun add:*)",
+      "Bash(bunx tailwindcss init:*)",
+      "Bash(bun remove:*)",
+      "Bash(bun:*)",
+      "Bash(rm:*)",
+      "WebFetch(domain:tailwindcss.com)"
+    ],
+    "deny": []
+  }
+}
