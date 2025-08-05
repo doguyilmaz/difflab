@@ -1,91 +1,61 @@
-<div align="center">
-  <h1>JSON Diff Tool</h1>
-  <p>A web-based tool for comparing and analyzing JSON objects with an intuitive interface and powerful features.</p>
+# vue-migration
 
-  <p>
-    <a href="https://doguyilmaz.github.io/json-diff-tool">View Demo</a>
-    ·
-    <a href="https://github.com/doguyilmaz/json-diff-tool/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/doguyilmaz/json-diff-tool/issues">Request Feature</a>
-  </p>
-</div>
+This template should help get you started developing with Vue 3 in Vite.
 
-## ✨ Features
+## Recommended IDE Setup
 
-- 📊 **Two Comparison Modes**
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-  - Key Comparison: Shows missing keys in each JSON
-  - Diff Comparison: Detailed view of all differences
+## Type Support for `.vue` Imports in TS
 
-- 🛠️ **Core Capabilities**
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
 
-  - Compare both keys and values
-  - Highlight differences in nested objects
-  - Support for complex JSON structures
-  - Modern, responsive interface with drag-and-drop
-  - Real-time validation and error handling
-  - Comprehensive diff visualization
-  - Multi-file support
-  - Responsive design for all devices
-  - File name tracking
-  - Automatic JSON validation
-  - Error handling with clear messages
+## Customize configuration
 
-## 🚀 Quick Start
+See [Vite Configuration Reference](https://vite.dev/config/).
 
-### Online Version
+## Project Setup
 
-Visit [JSON Diff Tool](https://doguyilmaz.github.io/json-diff-tool) to use the tool directly in your browser.
+```sh
+bun install
+```
 
-### Local Development
+### Compile and Hot-Reload for Development
 
-1. Clone the repository
+```sh
+bun dev
+```
 
-2. Navigate to project directory
+### Type-Check, Compile and Minify for Production
 
-3. Make your changes
+```sh
+bun run build
+```
 
-4. Open `index.html` in your browser directly or use live server
+### Run Unit Tests with [Vitest](https://vitest.dev/)
 
-## 📖 Usage Guide
+```sh
+bun test:unit
+```
 
-### Usage
+### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
 
-1. **Input Your JSON**
+```sh
+bun test:e2e:dev
+```
 
-   - Type or paste JSON directly into the text areas
-   - Drag and drop JSON files into either input
-   - Drop multiple files at once (they'll be automatically placed in empty inputs)
-   - You'll be asked for confirmation before overwriting existing content
+This runs the end-to-end tests against the Vite development server.
+It is much faster than the production build.
 
-2. **Select Comparison Mode**
+But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
 
-   - **Key Comparison**: Shows which keys are missing in each JSON
-   - **Diff Comparison**: Shows a detailed view of all differences
+```sh
+bun run build
+bun test:e2e
+```
 
-3. **Working with the Tool**
-   - Toggle "Compare Values" to check for value differences
-   - Clear inputs using the clear button
-   - View file names and track edited states
-   - See instant comparison results as you type
-   - Get automatic JSON validation with clear error messages
-   - Notice highlighted differences and comparison mode indicators
+### Lint with [ESLint](https://eslint.org/)
 
-## 🙏 Acknowledgments
-
-- [Tailwind CSS](https://tailwindcss.com) for the styling framework
-- [Font Awesome](https://fontawesome.com) for the icons
-- [jsdiff](https://github.com/kpdecker/jsdiff) for the diff implementation
-
-## 🔮 Future Improvements
-
-- Dark mode support
-- JSON syntax highlighting
-- Save comparison results
-- More comparison options
-- Keyboard shortcuts
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```sh
+bun lint
+```
