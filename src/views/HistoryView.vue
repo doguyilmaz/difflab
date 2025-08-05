@@ -10,7 +10,7 @@
         </div>
         <button
           v-if="history.length > 0"
-          @click="clearHistory"
+          @click="historyStore.clearHistory"
           class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50"
         >
           <TrashIcon class="h-4 w-4" />
@@ -170,6 +170,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJsonDiffStore } from '@/stores/counter'
+import { useHistoryStore, type HistoryItem } from '@/stores/history'
 import AppLayout from '@/components/AppLayout.vue'
 import {
   ClockIcon,
@@ -181,28 +182,12 @@ import {
   ArrowDownTrayIcon
 } from '@heroicons/vue/24/outline'
 
-interface HistoryItem {
-  id: string
-  timestamp: string
-  mode: 'key' | 'diff'
-  files: {
-    first: string
-    second: string
-  }
-  hasChanges: boolean
-  changesCount: number
-  summary: string
-  data: {
-    json1Content: string
-    json2Content: string
-    result: any
-  }
-}
 
 const router = useRouter()
 const store = useJsonDiffStore()
+const historyStore = useHistoryStore()
 
-const history = ref<HistoryItem[]>([])
+const history = computed(() => historyStore.history)
 const searchQuery = ref('')
 const filterMode = ref('')
 const sortBy = ref('date-desc')
@@ -210,24 +195,17 @@ const currentPage = ref(1)
 const itemsPerPage = 10
 
 const filteredHistory = computed(() => {
-  let filtered = history.value
-
-  // Search filter
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(item =>
-      item.files.first.toLowerCase().includes(query) ||
-      item.files.second.toLowerCase().includes(query)
-    )
-  }
+  let filtered = searchQuery.value 
+    ? historyStore.searchHistory(searchQuery.value)
+    : history.value
 
   // Mode filter
   if (filterMode.value) {
-    filtered = filtered.filter(item => item.mode === filterMode.value)
+    filtered = historyStore.filterByMode(filterMode.value as 'key' | 'diff' | '')
   }
 
   // Sort
-  filtered.sort((a, b) => {
+  filtered = [...filtered].sort((a, b) => {
     switch (sortBy.value) {
       case 'date-desc':
         return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -247,33 +225,17 @@ const filteredHistory = computed(() => {
 })
 
 const totalPages = computed(() => {
-  let filtered = history.value
-
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(item =>
-      item.files.first.toLowerCase().includes(query) ||
-      item.files.second.toLowerCase().includes(query)
-    )
-  }
+  let filtered = searchQuery.value 
+    ? historyStore.searchHistory(searchQuery.value)
+    : history.value
 
   if (filterMode.value) {
-    filtered = filtered.filter(item => item.mode === filterMode.value)
+    filtered = historyStore.filterByMode(filterMode.value as 'key' | 'diff' | '')
   }
 
   return Math.ceil(filtered.length / itemsPerPage)
 })
 
-function loadHistory() {
-  const saved = localStorage.getItem('json-diff-history')
-  if (saved) {
-    try {
-      history.value = JSON.parse(saved)
-    } catch (error) {
-      console.error('Failed to load history:', error)
-    }
-  }
-}
 
 function formatDate(timestamp: string): string {
   const date = new Date(timestamp)
@@ -304,34 +266,15 @@ function loadComparison(item: HistoryItem) {
 }
 
 function exportComparison(item: HistoryItem) {
-  const blob = new Blob([JSON.stringify(item, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `comparison-${item.files.first}-vs-${item.files.second}-${item.timestamp.split('T')[0]}.json`
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
+  historyStore.exportItem(item)
 }
 
 function deleteItem(id: string) {
   const confirmed = confirm('Are you sure you want to delete this comparison?')
   if (confirmed) {
-    history.value = history.value.filter(item => item.id !== id)
-    localStorage.setItem('json-diff-history', JSON.stringify(history.value))
+    historyStore.removeItem(id)
   }
 }
 
-function clearHistory() {
-  const confirmed = confirm('Are you sure you want to clear all comparison history?')
-  if (confirmed) {
-    history.value = []
-    localStorage.removeItem('json-diff-history')
-  }
-}
 
-onMounted(() => {
-  loadHistory()
-})
 </script>

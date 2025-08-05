@@ -1,5 +1,7 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
+import { useSettingsStore } from './settings'
+import { useHistoryStore } from './history'
 
 export interface JsonFile {
   id: string
@@ -18,6 +20,9 @@ export interface ComparisonResult {
 }
 
 export const useJsonDiffStore = defineStore('jsonDiff', () => {
+  const settingsStore = useSettingsStore()
+  const historyStore = useHistoryStore()
+
   const json1 = ref<JsonFile>({
     id: 'json1',
     name: 'JSON 1',
@@ -34,8 +39,8 @@ export const useJsonDiffStore = defineStore('jsonDiff', () => {
     isEdited: false
   })
 
-  const comparisonMode = ref<'key' | 'diff'>('key')
-  const compareValues = ref(false)
+  const comparisonMode = ref<'key' | 'diff'>(settingsStore.settings.defaultComparisonMode)
+  const compareValues = ref(settingsStore.settings.defaultCompareValues)
   const comparisonResult = ref<ComparisonResult | null>(null)
 
   const hasJsonFiles = computed(() => 
@@ -64,11 +69,41 @@ export const useJsonDiffStore = defineStore('jsonDiff', () => {
 
   function setComparisonResult(result: ComparisonResult) {
     comparisonResult.value = result
+    
+    // Add to history if both JSONs are present
+    if (hasJsonFiles.value && bothValid.value) {
+      historyStore.addToHistory(
+        comparisonMode.value,
+        { name: json1.value.name, content: json1.value.content },
+        { name: json2.value.name, content: json2.value.content },
+        result,
+        compareValues.value
+      )
+    }
   }
 
   function resetComparison() {
     comparisonResult.value = null
   }
+
+  // Initialize settings when store is created
+  function initializeFromSettings() {
+    comparisonMode.value = settingsStore.settings.defaultComparisonMode
+    compareValues.value = settingsStore.settings.defaultCompareValues
+  }
+
+  // Watch settings changes
+  watch(() => settingsStore.settings.defaultComparisonMode, (newMode) => {
+    if (!comparisonResult.value) {
+      comparisonMode.value = newMode
+    }
+  })
+
+  watch(() => settingsStore.settings.defaultCompareValues, (newValue) => {
+    if (!comparisonResult.value) {
+      compareValues.value = newValue
+    }
+  })
 
   return {
     json1,
@@ -81,6 +116,7 @@ export const useJsonDiffStore = defineStore('jsonDiff', () => {
     updateJsonFile,
     clearJsonFile,
     setComparisonResult,
-    resetComparison
+    resetComparison,
+    initializeFromSettings
   }
 })

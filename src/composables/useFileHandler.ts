@@ -1,7 +1,9 @@
 import { useJsonDiffStore } from '@/stores/counter'
+import { useSettingsStore } from '@/stores/settings'
 
 export function useFileHandler() {
   const store = useJsonDiffStore()
+  const settingsStore = useSettingsStore()
 
   function handleFileRead(file: File, targetId: 'json1' | 'json2') {
     return new Promise<void>((resolve, reject) => {
@@ -11,12 +13,16 @@ export function useFileHandler() {
         const content = e.target?.result as string
         
         try {
-          // Try to parse and format the JSON
+          // Try to parse the JSON first
           const parsed = JSON.parse(content)
-          const formatted = JSON.stringify(parsed, null, 2)
+          
+          // Format only if auto-format is enabled
+          const finalContent = settingsStore.settings.autoFormatJson 
+            ? JSON.stringify(parsed, null, 2)
+            : content
           
           store.updateJsonFile(targetId, {
-            content: formatted,
+            content: finalContent,
             name: file.name,
             isValid: true,
             error: undefined,

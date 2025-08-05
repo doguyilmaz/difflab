@@ -1,16 +1,26 @@
 <template>
   <div class="relative">
     <!-- Label and Actions -->
-    <div class="flex justify-between items-center mb-2">
-      <label :for="id" class="text-sm font-medium text-gray-700 flex items-center">
-        <DocumentTextIcon class="h-4 w-4 mr-2" />
+    <div class="flex justify-between items-center mb-3">
+      <label :for="id" class="text-base font-semibold text-gray-800 flex items-center">
+        <DocumentTextIcon class="h-5 w-5 mr-2 text-primary-600" />
         {{ displayName }}
-        <span v-if="!isValid" class="ml-2 text-red-500 text-xs">(Invalid JSON)</span>
+        <span 
+          v-if="hasContent"
+          class="ml-3 status-badge"
+          :class="{
+            'status-valid': isValid,
+            'status-invalid': !isValid,
+            'status-empty': !hasContent
+          }"
+        >
+          {{ isValid ? '✓ Valid' : '✗ Invalid' }}
+        </span>
       </label>
       <button
         v-if="hasContent"
         @click="clearContent"
-        class="text-sm text-gray-500 hover:text-red-600 transition-colors flex items-center gap-1"
+        class="btn-secondary !px-3 !py-2 text-red-600 hover:text-red-700 hover:bg-red-50"
       >
         <TrashIcon class="h-4 w-4" />
         Clear
@@ -19,8 +29,11 @@
 
     <!-- Textarea -->
     <div
-      class="relative textarea-container"
-      :class="{ 'border-red-300': !isValid && hasContent }"
+      class="relative drop-zone"
+      :class="{ 
+        'drag-over': isDragOver,
+        '!border-red-400 !bg-red-50/30': !isValid && hasContent 
+      }"
       @dragover="handleDragOver"
       @dragleave="handleDragLeave"
       @drop="handleDrop"
@@ -29,14 +42,10 @@
         :id="id"
         v-model="content"
         :placeholder="placeholder"
-        class="textarea-field"
-        :class="[
-          'min-h-[300px] w-full',
-          {
-            'border-red-300 focus:border-red-500 focus:ring-red-500': !isValid && hasContent,
-            'border-blue-400': isDragOver,
-          },
-        ]"
+        class="json-editor min-h-[400px] w-full border-0"
+        :class="{
+          '!bg-red-50 !border-red-300': !isValid && hasContent,
+        }"
         @input="handleInput"
         @paste="handlePaste"
       />
@@ -44,10 +53,10 @@
       <!-- Drag overlay -->
       <div
         v-show="isDragOver"
-        class="absolute inset-0 bg-primary-50 border-2 border-dashed border-primary-400 rounded-md flex items-center justify-center pointer-events-none"
+        class="absolute inset-0 bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-dashed border-primary-500 rounded-2xl flex items-center justify-center pointer-events-none backdrop-blur-sm"
       >
         <div class="text-center">
-          <CloudArrowUpIcon class="h-12 w-12 text-primary-500 mx-auto mb-2" />
+          <CloudArrowUpIcon class="h-16 w-16 text-primary-600 mx-auto mb-4 animate-bounce" />
           <p class="text-primary-700 font-medium">Drop JSON file here</p>
         </div>
       </div>

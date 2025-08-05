@@ -2,50 +2,60 @@
   <AppLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Hero Section -->
-      <div class="text-center mb-16">
-        <div class="flex justify-center mb-6">
-          <div class="p-3 bg-primary-100 rounded-full">
-            <CodeBracketIcon class="h-12 w-12 text-primary-600" />
+      <div class="text-center mb-20">
+        <div class="flex justify-center mb-8">
+          <div class="p-4 bg-gradient-to-br from-primary-500 to-primary-700 rounded-3xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+            <CodeBracketIcon class="h-16 w-16 text-white" />
           </div>
         </div>
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        <h1 class="text-6xl font-black bg-gradient-to-r from-primary-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6">
           JSON Diff Tool
         </h1>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-          Compare and analyze JSON objects with an intuitive interface and powerful features.
-          Built with modern Vue 3, TypeScript, and Tailwind CSS.
+        <p class="text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+          Compare and analyze JSON objects with an 
+          <span class="font-semibold text-primary-600">intuitive interface</span> 
+          and <span class="font-semibold text-primary-600">powerful features</span>.
+        </p>
+        <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
+          Built with modern Vue 3, TypeScript, Pinia, and Tailwind CSS v4.
         </p>
       </div>
 
       <!-- Features Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        <div class="card p-6">
-          <div class="flex items-center mb-4">
-            <DocumentDuplicateIcon class="h-8 w-8 text-primary-600 mr-3" />
-            <h3 class="text-lg font-semibold text-gray-900">Two Comparison Modes</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+        <div class="card p-8 group hover:-translate-y-2">
+          <div class="flex items-center mb-6">
+            <div class="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl mr-4 group-hover:scale-110 transition-transform">
+              <DocumentDuplicateIcon class="h-8 w-8 text-blue-600" />
+            </div>
+            <h3 class="text-xl font-bold text-gray-900">Two Comparison Modes</h3>
           </div>
-          <p class="text-gray-600">
-            Choose between Key Comparison to see missing keys, or Diff Comparison for detailed differences.
+          <p class="text-gray-600 leading-relaxed">
+            Choose between <span class="font-semibold">Key Comparison</span> to see missing keys, or <span class="font-semibold">Diff Comparison</span> for detailed line-by-line differences.
           </p>
         </div>
 
-        <div class="card p-6">
-          <div class="flex items-center mb-4">
-            <CloudArrowUpIcon class="h-8 w-8 text-primary-600 mr-3" />
-            <h3 class="text-lg font-semibold text-gray-900">Drag & Drop Support</h3>
+        <div class="card p-8 group hover:-translate-y-2">
+          <div class="flex items-center mb-6">
+            <div class="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl mr-4 group-hover:scale-110 transition-transform">
+              <CloudArrowUpIcon class="h-8 w-8 text-green-600" />
+            </div>
+            <h3 class="text-xl font-bold text-gray-900">Drag & Drop Support</h3>
           </div>
-          <p class="text-gray-600">
-            Simply drag and drop your JSON files, or paste content directly into the text areas.
+          <p class="text-gray-600 leading-relaxed">
+            Simply drag and drop your JSON files, or paste content directly into the enhanced text editors with syntax highlighting.
           </p>
         </div>
 
-        <div class="card p-6">
-          <div class="flex items-center mb-4">
-            <CheckCircleIcon class="h-8 w-8 text-primary-600 mr-3" />
-            <h3 class="text-lg font-semibold text-gray-900">Real-time Validation</h3>
+        <div class="card p-8 group hover:-translate-y-2">
+          <div class="flex items-center mb-6">
+            <div class="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl mr-4 group-hover:scale-110 transition-transform">
+              <CheckCircleIcon class="h-8 w-8 text-purple-600" />
+            </div>
+            <h3 class="text-xl font-bold text-gray-900">Real-time Validation</h3>
           </div>
-          <p class="text-gray-600">
-            Automatic JSON validation with clear error messages and instant comparison results.
+          <p class="text-gray-600 leading-relaxed">
+            Automatic JSON validation with clear error messages, visual status indicators, and instant comparison results.
           </p>
         </div>
 
