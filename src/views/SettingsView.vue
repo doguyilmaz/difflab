@@ -2,213 +2,201 @@
   <AppLayout>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-        <p class="text-gray-600">
+        <h1 class="text-3xl font-bold text-foreground mb-2">Settings</h1>
+        <p class="text-muted-foreground">
           Customize your JSON Diff Tool experience with these preferences.
         </p>
       </div>
 
       <div class="space-y-6">
         <!-- Comparison Settings -->
-        <div class="card p-6">
-          <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-            <CogIcon class="h-5 w-5 mr-2" />
-            Comparison Settings
-          </h2>
-          
-          <div class="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center">
+              <CogIcon class="h-5 w-5 mr-2" />
+              Comparison Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-6">
             <div class="flex items-center justify-between">
-              <div>
-                <label class="text-sm font-medium text-gray-700">Default Compare Values</label>
-                <p class="text-sm text-gray-500">Always compare values by default when loading the app</p>
+              <div class="space-y-0.5">
+                <label class="text-sm font-medium">Default Compare Values</label>
+                <p class="text-sm text-muted-foreground">Always compare values by default when loading the app</p>
               </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input
-                  :checked="settingsStore.settings.defaultCompareValues"
-                  type="checkbox"
-                  class="sr-only peer"
-                  @change="settingsStore.updateSetting('defaultCompareValues', ($event.target as HTMLInputElement).checked)"
-                >
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-              </label>
+              <Switch
+                :checked="settingsStore.settings.defaultCompareValues"
+                @update:checked="(checked) => settingsStore.updateSetting('defaultCompareValues', checked)"
+              />
             </div>
 
             <div class="flex items-center justify-between">
-              <div>
-                <label class="text-sm font-medium text-gray-700">Auto-format JSON</label>
-                <p class="text-sm text-gray-500">Automatically format JSON when pasting</p>
+              <div class="space-y-0.5">
+                <label class="text-sm font-medium">Auto-format JSON</label>
+                <p class="text-sm text-muted-foreground">Automatically format JSON when pasting</p>
               </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input
-                  :checked="settingsStore.settings.autoFormatJson"
-                  type="checkbox"
-                  class="sr-only peer"
-                  @change="settingsStore.updateSetting('autoFormatJson', ($event.target as HTMLInputElement).checked)"
-                >
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-              </label>
+              <Switch
+                :checked="settingsStore.settings.autoFormatJson"
+                @update:checked="(checked) => settingsStore.updateSetting('autoFormatJson', checked)"
+              />
             </div>
 
-            <div>
-              <label class="text-sm font-medium text-gray-700 block mb-2">Default Comparison Mode</label>
-              <select
-                :value="settingsStore.settings.defaultComparisonMode"
-                class="input-field max-w-xs"
-                @change="settingsStore.updateSetting('defaultComparisonMode', ($event.target as HTMLSelectElement).value as 'key' | 'diff')"
+            <div class="space-y-2">
+              <label class="text-sm font-medium">Default Comparison Mode</label>
+              <Select
+                :model-value="settingsStore.settings.defaultComparisonMode"
+                @update:model-value="(value) => settingsStore.updateSetting('defaultComparisonMode', value as 'key' | 'diff')"
               >
-                <option value="key">Key Comparison</option>
-                <option value="diff">Diff Comparison</option>
-              </select>
+                <SelectTrigger class="max-w-xs">
+                  <SelectValue placeholder="Select mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="key">Key Comparison</SelectItem>
+                  <SelectItem value="diff">Diff Comparison</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         <!-- Appearance Settings -->
-        <div class="card p-6">
-          <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-            <PaintBrushIcon class="h-5 w-5 mr-2" />
-            Appearance
-          </h2>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="text-sm font-medium text-gray-700 block mb-2">Theme</label>
-              <div class="flex space-x-4">
-                <label class="flex items-center">
-                  <input
-                    :checked="settingsStore.settings.theme === 'light'"
-                    type="radio"
-                    value="light"
-                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                    @change="settingsStore.updateSetting('theme', 'light')"
-                  >
-                  <span class="ml-2 text-sm text-gray-700">Light</span>
-                </label>
-                <label class="flex items-center">
-                  <input
-                    :checked="settingsStore.settings.theme === 'dark'"
-                    type="radio"
-                    value="dark"
-                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                    @change="settingsStore.updateSetting('theme', 'dark')"
-                  >
-                  <span class="ml-2 text-sm text-gray-700">Dark</span>
-                </label>
-                <label class="flex items-center">
-                  <input
-                    :checked="settingsStore.settings.theme === 'system'"
-                    type="radio"
-                    value="system"
-                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                    @change="settingsStore.updateSetting('theme', 'system')"
-                  >
-                  <span class="ml-2 text-sm text-gray-700">System</span>
-                </label>
-              </div>
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center">
+              <PaintBrushIcon class="h-5 w-5 mr-2" />
+              Appearance
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-6">
+            <div class="space-y-3">
+              <Label class="text-sm font-medium">Theme</Label>
+              <RadioGroup
+                :model-value="settingsStore.settings.theme"
+                @update:model-value="(value) => settingsStore.updateSetting('theme', value as 'light' | 'dark' | 'system')"
+                class="flex gap-6"
+              >
+                <div class="flex items-center space-x-2">
+                  <RadioGroupItem value="light" id="light" />
+                  <Label htmlFor="light">Light</Label>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <RadioGroupItem value="dark" id="dark" />
+                  <Label htmlFor="dark">Dark</Label>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <RadioGroupItem value="system" id="system" />
+                  <Label htmlFor="system">System</Label>
+                </div>
+              </RadioGroup>
             </div>
 
-            <div>
-              <label class="text-sm font-medium text-gray-700 block mb-2">Font Size</label>
-              <select
-                :value="settingsStore.settings.fontSize"
-                class="input-field max-w-xs"
-                @change="settingsStore.updateSetting('fontSize', ($event.target as HTMLSelectElement).value as 'small' | 'medium' | 'large')"
+            <div class="space-y-2">
+              <Label class="text-sm font-medium">Font Size</Label>
+              <Select
+                :model-value="settingsStore.settings.fontSize"
+                @update:model-value="(value) => settingsStore.updateSetting('fontSize', value as 'small' | 'medium' | 'large')"
               >
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-              </select>
+                <SelectTrigger class="max-w-xs">
+                  <SelectValue placeholder="Select font size" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Small</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="large">Large</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         <!-- Privacy & Data Settings -->
-        <div class="card p-6">
-          <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-            <ShieldCheckIcon class="h-5 w-5 mr-2" />
-            Privacy & Data
-          </h2>
-          
-          <div class="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center">
+              <ShieldCheckIcon class="h-5 w-5 mr-2" />
+              Privacy & Data
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-6">
             <div class="flex items-center justify-between">
-              <div>
-                <label class="text-sm font-medium text-gray-700">Save Comparison History</label>
-                <p class="text-sm text-gray-500">Store your comparison history locally in browser</p>
+              <div class="space-y-0.5">
+                <Label class="text-sm font-medium">Save Comparison History</Label>
+                <p class="text-sm text-muted-foreground">Store your comparison history locally in browser</p>
               </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input
-                  :checked="settingsStore.settings.saveHistory"
-                  type="checkbox"
-                  class="sr-only peer"
-                  @change="settingsStore.updateSetting('saveHistory', ($event.target as HTMLInputElement).checked)"
-                >
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-              </label>
+              <Switch
+                :checked="settingsStore.settings.saveHistory"
+                @update:checked="(checked) => settingsStore.updateSetting('saveHistory', checked)"
+              />
             </div>
 
-            <div>
-              <label class="text-sm font-medium text-gray-700 block mb-2">History Retention</label>
-              <select
-                :value="settingsStore.settings.historyRetention"
-                class="input-field max-w-xs"
+            <div class="space-y-2">
+              <Label class="text-sm font-medium">History Retention</Label>
+              <Select
+                :model-value="settingsStore.settings.historyRetention.toString()"
                 :disabled="!settingsStore.settings.saveHistory"
-                @change="settingsStore.updateSetting('historyRetention', parseInt(($event.target as HTMLSelectElement).value))"
+                @update:model-value="(value) => settingsStore.updateSetting('historyRetention', parseInt(value))"
               >
-                <option value="7">7 days</option>
-                <option value="30">30 days</option>
-                <option value="90">90 days</option>
-                <option value="365">1 year</option>
-              </select>
+                <SelectTrigger class="max-w-xs">
+                  <SelectValue placeholder="Select retention period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">7 days</SelectItem>
+                  <SelectItem value="30">30 days</SelectItem>
+                  <SelectItem value="90">90 days</SelectItem>
+                  <SelectItem value="365">1 year</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <div class="pt-4 border-t border-gray-200">
-              <button
+            <div class="pt-4 border-t border-border">
+              <Button
                 @click="clearAllData"
-                class="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50"
+                variant="outline"
+                class="text-destructive hover:text-destructive"
               >
                 <TrashIcon class="h-4 w-4" />
                 Clear All Data
-              </button>
-              <p class="text-xs text-gray-500 mt-2">
+              </Button>
+              <p class="text-xs text-muted-foreground mt-2">
                 This will clear all settings, history, and cached data
               </p>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         <!-- Export/Import Settings -->
-        <div class="card p-6">
-          <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
-            <ArrowsRightLeftIcon class="h-5 w-5 mr-2" />
-            Backup & Restore
-          </h2>
-          
-          <div class="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center">
+              <ArrowsRightLeftIcon class="h-5 w-5 mr-2" />
+              Backup & Restore
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-4">
             <div class="flex gap-4">
-              <button
+              <Button
                 @click="settingsStore.exportSettings"
-                class="btn-secondary"
+                variant="outline"
               >
                 <ArrowDownTrayIcon class="h-4 w-4" />
                 Export Settings
-              </button>
+              </Button>
               
-              <label class="btn-secondary cursor-pointer">
+              <Button variant="outline" class="relative">
                 <ArrowUpTrayIcon class="h-4 w-4" />
                 Import Settings
                 <input
                   type="file"
                   accept=".json"
-                  class="hidden"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   @change="importSettings"
                 >
-              </label>
+              </Button>
             </div>
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-muted-foreground">
               Export your settings to backup or share with other devices
             </p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   </AppLayout>
@@ -228,6 +216,12 @@ import {
   ArrowDownTrayIcon,
   ArrowUpTrayIcon
 } from '@heroicons/vue/24/outline'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 const settingsStore = useSettingsStore()
 const historyStore = useHistoryStore()

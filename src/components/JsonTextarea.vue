@@ -2,29 +2,27 @@
   <div class="relative">
     <!-- Label and Actions -->
     <div class="flex justify-between items-center mb-3">
-      <label :for="id" class="text-base font-semibold text-gray-800 flex items-center">
-        <DocumentTextIcon class="h-5 w-5 mr-2 text-primary-600" />
+      <label :for="id" class="text-base font-semibold text-foreground flex items-center">
+        <DocumentTextIcon class="h-5 w-5 mr-2 text-primary" />
         {{ displayName }}
-        <span 
+        <Badge 
           v-if="hasContent"
-          class="ml-3 status-badge"
-          :class="{
-            'status-valid': isValid,
-            'status-invalid': !isValid,
-            'status-empty': !hasContent
-          }"
+          class="ml-3"
+          :variant="isValid ? 'default' : 'destructive'"
         >
           {{ isValid ? '✓ Valid' : '✗ Invalid' }}
-        </span>
+        </Badge>
       </label>
-      <button
+      <Button
         v-if="hasContent"
         @click="clearContent"
-        class="btn-secondary !px-3 !py-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+        variant="outline"
+        size="sm"
+        class="text-destructive hover:text-destructive"
       >
         <TrashIcon class="h-4 w-4" />
         Clear
-      </button>
+      </Button>
     </div>
 
     <!-- Textarea -->
@@ -32,19 +30,19 @@
       class="relative drop-zone"
       :class="{ 
         'drag-over': isDragOver,
-        '!border-red-400 !bg-red-50/30': !isValid && hasContent 
+        '!border-destructive !bg-destructive/10': !isValid && hasContent 
       }"
       @dragover="handleDragOver"
       @dragleave="handleDragLeave"
       @drop="handleDrop"
     >
-      <textarea
+      <Textarea
         :id="id"
         v-model="content"
         :placeholder="placeholder"
-        class="json-editor min-h-[400px] w-full border-0"
+        class="json-editor min-h-[400px] resize-none border-0 bg-transparent"
         :class="{
-          '!bg-red-50 !border-red-300': !isValid && hasContent,
+          '!border-destructive': !isValid && hasContent,
         }"
         @input="handleInput"
         @paste="handlePaste"
@@ -53,25 +51,25 @@
       <!-- Drag overlay -->
       <div
         v-show="isDragOver"
-        class="absolute inset-0 bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-dashed border-primary-500 rounded-2xl flex items-center justify-center pointer-events-none backdrop-blur-sm"
+        class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded-lg flex items-center justify-center pointer-events-none backdrop-blur-sm"
       >
         <div class="text-center">
-          <CloudArrowUpIcon class="h-16 w-16 text-primary-600 mx-auto mb-4 animate-bounce" />
-          <p class="text-primary-700 font-medium">Drop JSON file here</p>
+          <CloudArrowUpIcon class="h-16 w-16 text-primary mx-auto mb-4 animate-bounce" />
+          <p class="text-primary font-medium">Drop JSON file here</p>
         </div>
       </div>
     </div>
 
     <!-- Error message -->
-    <div v-if="!isValid && hasContent && error" class="mt-2 text-sm text-red-600">
+    <div v-if="!isValid && hasContent && error" class="mt-2 text-sm text-destructive">
       <ExclamationTriangleIcon class="h-4 w-4 inline mr-1" />
       {{ error }}
     </div>
 
     <!-- File info -->
-    <div v-if="hasContent" class="mt-2 text-xs text-gray-500 flex items-center justify-between">
+    <div v-if="hasContent" class="mt-2 text-xs text-muted-foreground flex items-center justify-between">
       <span>{{ content.split('\n').length }} lines, {{ content.length }} characters</span>
-      <span v-if="isEdited" class="text-orange-600">(edited)</span>
+      <span v-if="isEdited" class="text-orange-500">(edited)</span>
     </div>
   </div>
 </template>
@@ -84,6 +82,9 @@ import {
   CloudArrowUpIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
 
 interface Props {
   id: string

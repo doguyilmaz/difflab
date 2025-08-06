@@ -6,7 +6,8 @@
       "Bash(bun remove:*)",
       "Bash(bun:*)",
       "Bash(rm:*)",
-      "WebFetch(domain:tailwindcss.com)"
+      "WebFetch(domain:tailwindcss.com)",
+      "Bash(timeout:*)"
     ],
     "deny": []
   }

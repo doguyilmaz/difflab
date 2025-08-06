@@ -8,32 +8,32 @@
             <CodeBracketIcon class="h-16 w-16 text-white" />
           </div>
         </div>
-        <h1 class="text-6xl font-black bg-gradient-to-r from-primary-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+        <h1 class="text-6xl font-black text-foreground mb-6">
           JSON Diff Tool
         </h1>
-        <p class="text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+        <p class="text-2xl text-foreground max-w-3xl mx-auto leading-relaxed">
           Compare and analyze JSON objects with an 
-          <span class="font-semibold text-primary-600">intuitive interface</span> 
-          and <span class="font-semibold text-primary-600">powerful features</span>.
+          <span class="font-semibold text-primary">intuitive interface</span> 
+          and <span class="font-semibold text-primary">powerful features</span>.
         </p>
-        <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
-          Built with modern Vue 3, TypeScript, Pinia, and Tailwind CSS v4.
+        <p class="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto">
+          Built with modern Vue 3, TypeScript, Pinia, shadcn-vue and Tailwind CSS v4.
         </p>
       </div>
 
       <!-- Features Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-        <div class="card p-8 group hover:-translate-y-2">
+        <Card class="p-8 group hover:-translate-y-2 transition-transform">
           <div class="flex items-center mb-6">
-            <div class="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl mr-4 group-hover:scale-110 transition-transform">
-              <DocumentDuplicateIcon class="h-8 w-8 text-blue-600" />
+            <div class="p-3 bg-primary/10 rounded-2xl mr-4 group-hover:scale-110 transition-transform">
+              <DocumentDuplicateIcon class="h-8 w-8 text-primary" />
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Two Comparison Modes</h3>
+            <h3 class="text-xl font-bold text-card-foreground">Two Comparison Modes</h3>
           </div>
-          <p class="text-gray-600 leading-relaxed">
+          <p class="text-muted-foreground leading-relaxed">
             Choose between <span class="font-semibold">Key Comparison</span> to see missing keys, or <span class="font-semibold">Diff Comparison</span> for detailed line-by-line differences.
           </p>
-        </div>
+        </Card>
 
         <div class="card p-8 group hover:-translate-y-2">
           <div class="flex items-center mb-6">
