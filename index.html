@@ -69,16 +69,40 @@
       background: var(--text-muted);
     }
 
+    .editor-wrap {
+      position: relative;
+      min-height: 260px;
+    }
+
+    .editor-highlight {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      padding: 12px;
+      font-family: 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow: hidden;
+      pointer-events: none;
+      color: var(--text-muted);
+    }
+
     .editor {
+      position: relative;
       background: transparent;
       border: none;
-      color: var(--text);
+      color: transparent;
+      caret-color: var(--text);
       font-size: 13px;
       line-height: 1.65;
       resize: none;
       min-height: 260px;
       width: 100%;
       padding: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .editor:focus {
@@ -88,6 +112,13 @@
     .editor::placeholder {
       color: var(--text-muted);
     }
+
+    .hl-key { color: #93c5fd; }
+    .hl-str { color: #86efac; }
+    .hl-num { color: #fdba74; }
+    .hl-bool { color: #c4b5fd; }
+    .hl-null { color: #c4b5fd; }
+    .hl-brace { color: var(--text-muted); }
 
     .panel {
       background: var(--bg-surface);
@@ -414,7 +445,10 @@
             <button class="btn danger" onclick="clearInput('json1')">Clear</button>
           </div>
         </div>
-        <textarea id="json1" class="editor" placeholder="Paste or drop JSON here..." spellcheck="false"></textarea>
+        <div class="editor-wrap">
+          <pre id="highlight-json1" class="editor-highlight" aria-hidden="true"></pre>
+          <textarea id="json1" class="editor" placeholder="Paste or drop JSON here..." spellcheck="false"></textarea>
+        </div>
       </div>
 
       <div id="panel-json2" class="panel" ondragover="panelDragOver(event, 'json2')"
@@ -426,7 +460,10 @@
             <button class="btn danger" onclick="clearInput('json2')">Clear</button>
           </div>
         </div>
-        <textarea id="json2" class="editor" placeholder="Paste or drop JSON here..." spellcheck="false"></textarea>
+        <div class="editor-wrap">
+          <pre id="highlight-json2" class="editor-highlight" aria-hidden="true"></pre>
+          <textarea id="json2" class="editor" placeholder="Paste or drop JSON here..." spellcheck="false"></textarea>
+        </div>
       </div>
     </div>
 
@@ -506,6 +543,8 @@
         if (state.activeTab) { activeTab = state.activeTab; switchTab(activeTab); }
         if (state.compareValues) $('compareValues').checked = state.compareValues;
         updateLabels();
+        updateHighlight('json1');
+        updateHighlight('json2');
       }
     } catch { }
 
@@ -529,6 +568,7 @@
         toast('Input too large (' + (val.length / 1000).toFixed(0) + 'KB). Max ' + (MAX_SIZE / 1000) + 'KB.', true);
         $(id).value = val.slice(0, MAX_SIZE);
       }
+      updateHighlight(id);
       markEdited(id);
       if (val.length > DEBOUNCE_THRESHOLD) {
         clearTimeout(debounceTimer);
@@ -541,6 +581,41 @@
 
     json1El.addEventListener('input', () => onInput('json1'));
     json2El.addEventListener('input', () => onInput('json2'));
+
+    // Sync scroll between textarea and highlight overlay
+    json1El.addEventListener('scroll', () => syncScroll('json1'));
+    json2El.addEventListener('scroll', () => syncScroll('json2'));
+
+    function syncScroll(id) {
+      const ta = $(id);
+      const hl = $('highlight-' + id);
+      hl.scrollTop = ta.scrollTop;
+      hl.scrollLeft = ta.scrollLeft;
+    }
+
+    function highlightJson(str) {
+      if (!str) return '';
+      const html = str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      return html.replace(
+        /("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false)\b|\b(null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g,
+        (m, s, colon, bool, nul, num) => {
+          if (s) return colon
+            ? '<span class="hl-key">' + s + '</span>' + colon
+            : '<span class="hl-str">' + s + '</span>';
+          if (bool) return '<span class="hl-bool">' + bool + '</span>';
+          if (nul) return '<span class="hl-null">' + nul + '</span>';
+          if (num) return '<span class="hl-num">' + num + '</span>';
+          return m;
+        }
+      );
+    }
+
+    function updateHighlight(id) {
+      $('highlight-' + id).innerHTML = highlightJson($(id).value);
+    }
 
     function switchTab(tab) {
       activeTab = tab;
@@ -556,6 +631,7 @@
       if (!el.value.trim()) return;
       try {
         el.value = JSON.stringify(JSON.parse(el.value), null, 2);
+        updateHighlight(id);
         runComparison();
         saveState();
         toast('Formatted');
@@ -570,6 +646,8 @@
       fileNames.json1 = fileNames.json2;
       fileNames.json2 = tmpName;
       updateLabels();
+      updateHighlight('json1');
+      updateHighlight('json2');
       runComparison();
       saveState();
       toast('Swapped');
@@ -577,6 +655,7 @@
 
     function clearInput(id) {
       $(id).value = '';
+      updateHighlight(id);
       fileNames[id] = id === 'json1' ? 'JSON 1' : 'JSON 2';
       updateLabels();
       runComparison();
@@ -846,6 +925,7 @@
       reader.onload = e => {
         $(targetId).value = e.target.result;
         fileNames[targetId] = file.name;
+        updateHighlight(targetId);
         updateLabels();
         runComparison();
         saveState();
