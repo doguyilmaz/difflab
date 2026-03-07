@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/* Dark theme (default) — warm neutral palette */
+:root {
+  --bg-base: #0c0c0e;
+  --bg-surface: #141416;
+  --bg-elevated: #1c1c20;
+  --bg-hover: rgba(255, 255, 255, 0.05);
+  --border: #25252a;
+  --border-focus: #3a3a42;
+  --text: #ececee;
+  --text-secondary: #9d9da6;
+  --text-muted: #55555e;
+  --accent: #5ba4d9;
+  --accent-dim: #1a3148;
+  --added: #66d99a;
+  --added-bg: rgba(102, 217, 154, 0.08);
+  --removed: #e8706a;
+  --removed-bg: rgba(232, 112, 106, 0.08);
+  --changed: #e0b44a;
+  --changed-bg: rgba(224, 180, 74, 0.08);
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg-base: #f8f8fa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f0f0f4;
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  --border: #dcdce2;
+  --border-focus: #a0a0aa;
+  --text: #1a1a1e;
+  --text-secondary: #5a5a66;
+  --text-muted: #9a9aa6;
+  --accent: #3b82c4;
+  --accent-dim: #dbeafe;
+  --added: #1a8a4a;
+  --added-bg: rgba(26, 138, 74, 0.08);
+  --removed: #c43030;
+  --removed-bg: rgba(196, 48, 48, 0.08);
+  --changed: #a07820;
+  --changed-bg: rgba(160, 120, 32, 0.08);
+}
+
+@theme inline {
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-hover: var(--bg-hover);
+  --color-border: var(--border);
+  --color-border-focus: var(--border-focus);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-added: var(--added);
+  --color-added-bg: var(--added-bg);
+  --color-removed: var(--removed);
+  --color-removed-bg: var(--removed-bg);
+  --color-changed: var(--changed);
+  --color-changed-bg: var(--changed-bg);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Syntax highlighting — dark */
+.hl-key { color: #8bb8e0; }
+.hl-str { color: #7ecba1; }
+.hl-num { color: #d4a66a; }
+.hl-bool { color: #b09eda; }
+.hl-null { color: #b09eda; }
+.hl-comment { color: #555560; font-style: italic; }
+
+/* Syntax highlighting — light */
+[data-theme="light"] .hl-key { color: #2860a0; }
+[data-theme="light"] .hl-str { color: #1a7a40; }
+[data-theme="light"] .hl-num { color: #b86e00; }
+[data-theme="light"] .hl-bool { color: #6a40b0; }
+[data-theme="light"] .hl-null { color: #6a40b0; }
+[data-theme="light"] .hl-comment { color: #9a9aa6; font-style: italic; }
