@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import type { Format } from "@/types";
 import { FORMAT_LABELS, STRUCTURED_FORMATS } from "@/types";
 import { formatContent } from "@/lib/format/formatter";
+import { stripSuffix } from "@/lib/name-utils";
 import { useCallback, useRef, useState } from "react";
 
 const CodeMirrorEditor = dynamic(
@@ -102,8 +103,7 @@ export function EditorPanel({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    // Use label as filename, add extension if missing
-    let fileName = label.replace(" (edited)", "").trim() || "file";
+    let fileName = stripSuffix(label.trim()) || "file";
     const ext = FORMAT_EXTENSIONS[format];
     if (!fileName.includes(".")) fileName += ext;
     a.download = fileName;
@@ -152,7 +152,7 @@ export function EditorPanel({
           {isEditingLabel ? (
             <input
               ref={labelInputRef}
-              defaultValue={label.replace(" (edited)", "")}
+              defaultValue={label}
               onBlur={handleLabelSubmit}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleLabelSubmit();

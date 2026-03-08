@@ -31,6 +31,7 @@ export function CodeMirrorEditor({
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const langCompartment = useRef(new Compartment());
+  const placeholderCompartment = useRef(new Compartment());
   const onChangeRef = useRef(onChange);
   const onFormatRef = useRef(onFormat);
   const formatOnPasteRef = useRef(formatOnPaste);
@@ -73,7 +74,7 @@ export function CodeMirrorEditor({
         diffLabTheme,
         updateListener,
         pasteHandler,
-        placeholderExt(placeholder ?? `Paste ${FORMAT_LABELS[format]} here...`),
+        placeholderCompartment.current.of(placeholderExt(placeholder ?? `Paste or drop ${FORMAT_LABELS[format]} here...`)),
         EditorView.lineWrapping,
       ],
     });
@@ -127,10 +128,21 @@ export function CodeMirrorEditor({
     updateLanguage(format);
   }, [format, updateLanguage]);
 
+  // Update placeholder when format changes
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    view.dispatch({
+      effects: placeholderCompartment.current.reconfigure(
+        placeholderExt(placeholder ?? `Paste or drop ${FORMAT_LABELS[format]} here...`),
+      ),
+    });
+  }, [format, placeholder]);
+
   return (
     <div
       ref={containerRef}
-      className="min-h-[260px] [&_.cm-editor]:min-h-[260px] [&_.cm-editor]:outline-none"
+      className="min-h-[260px] max-h-[500px] overflow-auto [&_.cm-editor]:min-h-[260px] [&_.cm-editor]:outline-none"
     />
   );
 }

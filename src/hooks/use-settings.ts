@@ -9,6 +9,7 @@ interface Settings {
   ignoreWhitespace: boolean;
   ignoreCase: boolean;
   diffViewMode: DiffViewMode;
+  compactDiff: boolean;
 }
 
 const STORAGE_KEY = "difflab-settings";
@@ -18,6 +19,7 @@ const defaults: Settings = {
   ignoreWhitespace: false,
   ignoreCase: false,
   diffViewMode: "unified",
+  compactDiff: true,
 };
 
 function readSettings(): Settings {

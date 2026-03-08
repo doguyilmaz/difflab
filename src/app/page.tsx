@@ -17,6 +17,7 @@ import { parseStructured, formatContent, minifyContent } from "@/lib/format/form
 import { detectFormat, detectFormatFromExtension } from "@/lib/format/detect";
 import { saveComparison } from "@/lib/db";
 import { useSettings } from "@/hooks/use-settings";
+import { addSuffix, stripSuffix, markEdited } from "@/lib/name-utils";
 import type {
   ActiveTab,
   DiffResult,
@@ -58,9 +59,6 @@ function loadSavedState(): State {
   return defaultState();
 }
 
-function cleanName(name: string): string {
-  return name.replace(" (edited)", "");
-}
 
 function formatMissingDisplay(obj: MissingKeysResult): string {
   return Object.keys(obj).length
@@ -70,7 +68,8 @@ function formatMissingDisplay(obj: MissingKeysResult): string {
 
 export default function Home() {
   const [state, setState] = useState<State>(loadSavedState);
-  const [hydrated] = useState(() => typeof window !== "undefined");
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
   const { toast, show: showToast } = useToast();
   const { settings, updateSetting } = useSettings();
   const [isSaved, setIsSaved] = useState(false);
@@ -133,29 +132,35 @@ export default function Home() {
     [saveState, showToast],
   );
 
-  const markEdited = useCallback(
-    (side: "left" | "right") => {
+  const handleChange = useCallback(
+    (side: "left" | "right", value: string) => {
       setState((prev) => {
         const panel = prev[side];
-        if (panel.fileName.includes("(edited)")) return prev;
+        const clipped =
+          value.length > MAX_SIZE ? value.slice(0, MAX_SIZE) : value;
+        const newFormat = value
+          ? detectFormat(value, panel.fileName)
+          : panel.format;
         const next = {
           ...prev,
-          [side]: { ...panel, fileName: `${panel.fileName} (edited)` },
+          [side]: {
+            content: clipped,
+            fileName: markEdited(panel.fileName),
+            format: newFormat,
+          },
         };
+        if (value.length > MAX_SIZE) {
+          showToast(
+            `Input too large (${(value.length / 1000).toFixed(0)}KB). Max ${MAX_SIZE / 1000}KB.`,
+            true,
+          );
+        }
         saveState(next);
         return next;
       });
-    },
-    [saveState],
-  );
-
-  const handleChange = useCallback(
-    (side: "left" | "right", value: string) => {
-      updatePanel(side, value);
-      markEdited(side);
       setIsSaved(false);
     },
-    [updatePanel, markEdited],
+    [saveState, showToast],
   );
 
   const handleSave = useCallback(async () => {
@@ -164,15 +169,15 @@ export default function Home() {
       showToast("Nothing to save", true);
       return;
     }
-    const title = `${cleanName(s.left.fileName)} vs ${cleanName(s.right.fileName)}`;
+    const title = `${stripSuffix(s.left.fileName)} vs ${stripSuffix(s.right.fileName)}`;
     await saveComparison({
       title,
       leftContent: s.left.content,
       rightContent: s.right.content,
       leftFormat: s.left.format,
       rightFormat: s.right.format,
-      leftFileName: cleanName(s.left.fileName),
-      rightFileName: cleanName(s.right.fileName),
+      leftFileName: stripSuffix(s.left.fileName),
+      rightFileName: stripSuffix(s.right.fileName),
       tags: [],
     });
     setIsSaved(true);
@@ -288,12 +293,12 @@ export default function Home() {
           ...prev,
           left: {
             content: sample.left,
-            fileName: `${sample.label} (old)`,
+            fileName: addSuffix(sample.label, "old"),
             format: sample.format,
           },
           right: {
             content: sample.right,
-            fileName: `${sample.label} (new)`,
+            fileName: addSuffix(sample.label, "new"),
             format: sample.format,
           },
           compareValues: true,
@@ -456,8 +461,8 @@ export default function Home() {
       } else if (!p2.ok) {
         error = `Right: ${p2.error}`;
       } else {
-        const label1 = truncate(cleanName(state.left.fileName), 24);
-        const label2 = truncate(cleanName(state.right.fileName), 24);
+        const label1 = truncate(stripSuffix(state.left.fileName), 24);
+        const label2 = truncate(stripSuffix(state.right.fileName), 24);
         missingInLeft = findMissing(
           p1.data,
           p2.data,
@@ -489,7 +494,7 @@ export default function Home() {
   function handleCopy() {
     let text: string;
     if (state.activeTab === "keys" && showKeysTab) {
-      text = `Missing in ${cleanName(state.left.fileName)}:\n${formatMissingDisplay(missingInLeft)}\n\nMissing in ${cleanName(state.right.fileName)}:\n${formatMissingDisplay(missingInRight)}`;
+      text = `Missing in ${stripSuffix(state.left.fileName)}:\n${formatMissingDisplay(missingInLeft)}\n\nMissing in ${stripSuffix(state.right.fileName)}:\n${formatMissingDisplay(missingInRight)}`;
     } else {
       text = diffResult?.lines.map((l) => l.text).join("\n") ?? "";
     }
@@ -581,10 +586,10 @@ export default function Home() {
             <p className="text-sm text-text-muted">
               Paste, drop, or upload content in both panels to compare.
             </p>
-            <p className="mt-1.5 text-xs text-text-muted">
+            <div className="mt-1.5 text-xs text-text-muted">
               Not sure how it works?{" "}
               <SampleDropdown onSelect={handleSample} />
-            </p>
+            </div>
           </div>
         )}
 
@@ -655,6 +660,21 @@ export default function Home() {
                     </svg>
                   </button>
                 </div>
+              )}
+              {diffResult && (
+                <button
+                  onClick={() => updateSetting("compactDiff", !settings.compactDiff)}
+                  className={`ml-1 cursor-pointer rounded-[5px] px-2 py-1 text-[11px] transition-colors ${
+                    settings.compactDiff
+                      ? "bg-bg-hover text-text"
+                      : "text-text-muted hover:text-text-secondary"
+                  }`}
+                  title={settings.compactDiff ? "Showing changes only — click to show all" : "Showing all lines — click to hide unchanged"}
+                  aria-label="Toggle compact diff"
+                  aria-pressed={settings.compactDiff}
+                >
+                  {settings.compactDiff ? "Changes only" : "Show all"}
+                </button>
               )}
             </div>
             <div className="ml-auto flex items-center gap-2">
@@ -734,14 +754,14 @@ export default function Home() {
             <KeysView
               missingInLeft={missingInLeft}
               missingInRight={missingInRight}
-              leftLabel={cleanName(state.left.fileName)}
-              rightLabel={cleanName(state.right.fileName)}
+              leftLabel={stripSuffix(state.left.fileName)}
+              rightLabel={stripSuffix(state.right.fileName)}
               compareValues={state.compareValues}
               error={error}
               isEmpty={isEmpty}
             />
           ) : (
-            <DiffView result={diffResult} error={error} isEmpty={isEmpty} viewMode={settings.diffViewMode} />
+            <DiffView result={diffResult} error={error} isEmpty={isEmpty} viewMode={settings.diffViewMode} compact={settings.compactDiff} />
           )}
         </div>
 
