@@ -2,7 +2,7 @@
 
 Compare JSON, YAML, TOML, and code files side by side. Runs entirely in the browser — no data leaves your machine.
 
-**[difflab.dev](https://difflab.dev)** (or wherever you deploy it)
+**[difflab.doguyilmaz.com](https://difflab.doguyilmaz.com)**
 
 ## What it does
 
