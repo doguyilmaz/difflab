@@ -4,12 +4,18 @@ const STRUCTURED_DATA = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: "DiffLab",
+  url: "https://difflab.dev",
   description:
     "Compare JSON, YAML, TOML, and code files side by side with instant diff visualization.",
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Any",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   browserRequirements: "Requires JavaScript",
+  author: {
+    "@type": "Person",
+    name: "doguyilmaz",
+    url: "https://doguyilmaz.com",
+  },
 });
 
 export function JsonLd() {

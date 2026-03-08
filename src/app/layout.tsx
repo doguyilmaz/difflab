@@ -5,8 +5,14 @@ import { Analytics } from '@vercel/analytics/next';
 import { JsonLd } from '@/components/seo/json-ld';
 import './globals.css';
 
+const SITE_URL = 'https://difflab.dev';
+
 export const metadata: Metadata = {
-  title: 'DiffLab - Compare JSON, YAML, TOML & Code',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'DiffLab - Compare JSON, YAML, TOML & Code',
+    template: '%s | DiffLab',
+  },
   description:
     'Compare JSON, YAML, TOML, and code files side by side. Find missing keys, value differences, and structural changes instantly.',
   keywords: [
@@ -17,21 +23,28 @@ export const metadata: Metadata = {
     'diff tool',
     'json compare',
     'text diff',
+    'online diff',
+    'code diff',
   ],
   authors: [{ name: 'doguyilmaz', url: 'https://doguyilmaz.com' }],
+  creator: 'doguyilmaz',
   icons: {
     icon: '/icon.svg',
+  },
+  alternates: {
+    canonical: '/',
   },
   openGraph: {
     title: 'DiffLab - Compare JSON, YAML, TOML & Code',
     description:
       'Compare structured data and code files side by side with instant diff visualization.',
+    url: SITE_URL,
     type: 'website',
     locale: 'en_US',
     siteName: 'DiffLab',
   },
   twitter: {
-    card: 'summary_large_image',
+    card: 'summary',
     title: 'DiffLab - Compare JSON, YAML, TOML & Code',
     description:
       'Compare structured data and code files side by side with instant diff visualization.',
@@ -47,6 +60,7 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
+        <meta name='apple-mobile-web-app-title' content='DiffLab' />
         <JsonLd />
       </head>
       <body

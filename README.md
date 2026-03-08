@@ -1,91 +1,66 @@
-<div align="center">
-  <h1>JSON Diff Tool</h1>
-  <p>A web-based tool for comparing and analyzing JSON objects with an intuitive interface and powerful features.</p>
+# DiffLab
 
-  <p>
-    <a href="https://doguyilmaz.github.io/json-diff-tool">View Demo</a>
-    ·
-    <a href="https://github.com/doguyilmaz/json-diff-tool/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/doguyilmaz/json-diff-tool/issues">Request Feature</a>
-  </p>
-</div>
+Compare JSON, YAML, TOML, and code files side by side. Runs entirely in the browser — no data leaves your machine.
 
-## ✨ Features
+**[difflab.dev](https://difflab.dev)** (or wherever you deploy it)
 
-- 📊 **Two Comparison Modes**
+## What it does
 
-  - Key Comparison: Shows missing keys in each JSON
-  - Diff Comparison: Detailed view of all differences
+- **Structured diff** for JSON, YAML, TOML — compares parsed keys and values, not just text
+- **Text diff** for everything else — JS, TS, Kotlin, Swift, HTML, CSS, Markdown, plain text
+- **Side-by-side and unified views** with GitHub-style collapsed unchanged regions
+- **Format detection** from file extension or content heuristics
+- **Local comparison history** stored in IndexedDB via Dexie.js — search, tag, export/import
+- **CodeMirror 6** editors with syntax highlighting, folding, bracket matching, search
+- Format, minify, download per panel
+- Drag & drop, file upload, keyboard shortcuts
+- Dark / light / system theme
+- Fully client-side, no server, no cookies
 
-- 🛠️ **Core Capabilities**
+## Stack
 
-  - Compare both keys and values
-  - Highlight differences in nested objects
-  - Support for complex JSON structures
-  - Modern, responsive interface with drag-and-drop
-  - Real-time validation and error handling
-  - Comprehensive diff visualization
-  - Multi-file support
-  - Responsive design for all devices
-  - File name tracking
-  - Automatic JSON validation
-  - Error handling with clear messages
+| | |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript (strict) |
+| Runtime | Bun |
+| Styling | Tailwind CSS v4 |
+| Editor | CodeMirror 6 |
+| Diff | jsdiff + custom structured engine |
+| Local DB | Dexie.js (IndexedDB) |
+| Analytics | Vercel Analytics |
 
-## 🚀 Quick Start
+## Development
 
-### Online Version
+```bash
+bun install
+bun dev
+```
 
-Visit [JSON Diff Tool](https://doguyilmaz.github.io/json-diff-tool) to use the tool directly in your browser.
+Build:
 
-### Local Development
+```bash
+bun run build
+```
 
-1. Clone the repository
+Lint:
 
-2. Navigate to project directory
+```bash
+bun run lint
+```
 
-3. Make your changes
+## Project structure
 
-4. Open `index.html` in your browser directly or use live server
+```
+src/
+  app/           Pages + metadata (App Router)
+  components/    React components (layout, editor, diff, ui)
+  lib/           Core logic (diff engine, formatter, format detection, db)
+  hooks/         Custom hooks (useTheme, useSettings)
+  types/         Shared TypeScript types
+  data/          Static sample data
+```
 
-## 📖 Usage Guide
+## License
 
-### Usage
-
-1. **Input Your JSON**
-
-   - Type or paste JSON directly into the text areas
-   - Drag and drop JSON files into either input
-   - Drop multiple files at once (they'll be automatically placed in empty inputs)
-   - You'll be asked for confirmation before overwriting existing content
-
-2. **Select Comparison Mode**
-
-   - **Key Comparison**: Shows which keys are missing in each JSON
-   - **Diff Comparison**: Shows a detailed view of all differences
-
-3. **Working with the Tool**
-   - Toggle "Compare Values" to check for value differences
-   - Clear inputs using the clear button
-   - View file names and track edited states
-   - See instant comparison results as you type
-   - Get automatic JSON validation with clear error messages
-   - Notice highlighted differences and comparison mode indicators
-
-## 🙏 Acknowledgments
-
-- [Tailwind CSS](https://tailwindcss.com) for the styling framework
-- [Font Awesome](https://fontawesome.com) for the icons
-- [jsdiff](https://github.com/kpdecker/jsdiff) for the diff implementation
-
-## 🔮 Future Improvements
-
-- Dark mode support
-- JSON syntax highlighting
-- Save comparison results
-- More comparison options
-- Keyboard shortcuts
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT
