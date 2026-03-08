@@ -32,7 +32,7 @@ export function SampleDropdown({ onSelect }: SampleDropdownProps) {
   }, [open]);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative inline-block">
       <button
         onClick={() => setOpen(!open)}
         className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-bg-surface px-3 py-1.5 text-xs font-medium text-text-muted transition-all hover:border-border-focus hover:bg-bg-elevated hover:text-text"
@@ -67,7 +67,7 @@ export function SampleDropdown({ onSelect }: SampleDropdownProps) {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 z-40 mt-1.5 w-64 overflow-hidden rounded-lg border border-border bg-bg-surface shadow-lg">
+        <div className="absolute top-full left-1/2 z-40 mt-1.5 w-64 -translate-x-1/2 overflow-hidden rounded-lg border border-border bg-bg-surface shadow-lg">
           <div className="px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-text-muted">
             Load a sample comparison
           </div>

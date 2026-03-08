@@ -559,7 +559,6 @@ export default function Home() {
         </div>
 
         <div className="mb-4 flex items-center justify-center gap-2">
-          <SampleDropdown onSelect={handleSample} />
           <button
             onClick={handleSwap}
             className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-bg-surface px-3 py-1.5 text-xs font-medium text-text-muted transition-all hover:border-border-focus hover:bg-bg-elevated hover:text-text"
@@ -579,6 +578,27 @@ export default function Home() {
             </svg>
             Swap
           </button>
+          {(v1 || v2) && (
+            <button
+              onClick={() => { handleClear("left"); handleClear("right"); }}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-bg-surface px-3 py-1.5 text-xs font-medium text-text-muted transition-all hover:border-border-focus hover:bg-bg-elevated hover:text-text"
+              title="Clear both panels"
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+              Clear all
+            </button>
+          )}
         </div>
 
         {!v1 && !v2 && (
@@ -586,8 +606,10 @@ export default function Home() {
             <p className="text-sm text-text-muted">
               Paste, drop, or upload content in both panels to compare.
             </p>
-            <div className="mt-1.5 text-xs text-text-muted">
-              Not sure how it works?{" "}
+            <p className="mt-1.5 text-xs text-text-muted">
+              Not sure how it works?
+            </p>
+            <div className="mt-2">
               <SampleDropdown onSelect={handleSample} />
             </div>
           </div>
