@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: 'DiffLab',
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'DiffLab - Compare JSON, YAML, TOML & Code',
     description:
       'Compare structured data and code files side by side with instant diff visualization.',
