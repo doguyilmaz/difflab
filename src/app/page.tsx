@@ -13,7 +13,7 @@ import { ShortcutsModal } from "@/components/ui/shortcuts-modal";
 import type { Sample } from "@/data/samples";
 import { findMissing, buildDiff, truncate } from "@/lib/diff/engine";
 import { buildTextDiff } from "@/lib/diff/text-diff";
-import { parseStructured, formatContent } from "@/lib/format/formatter";
+import { parseStructured, formatContent, minifyContent } from "@/lib/format/formatter";
 import { detectFormat, detectFormatFromExtension } from "@/lib/format/detect";
 import { saveComparison } from "@/lib/db";
 import { useSettings } from "@/hooks/use-settings";
@@ -221,6 +221,29 @@ export default function Home() {
           };
           saveState(next);
           showToast("Formatted");
+          return next;
+        }
+        showToast(result.error, true);
+        return prev;
+      });
+    },
+    [saveState, showToast],
+  );
+
+  const handleMinify = useCallback(
+    (side: "left" | "right") => {
+      setState((prev) => {
+        const panel = prev[side];
+        const content = panel.content.trim();
+        if (!content) return prev;
+        const result = minifyContent(content, panel.format);
+        if (result.ok) {
+          const next = {
+            ...prev,
+            [side]: { ...panel, content: result.result },
+          };
+          saveState(next);
+          showToast("Minified");
           return next;
         }
         showToast(result.error, true);
@@ -454,7 +477,10 @@ export default function Home() {
     } else {
       // Text diff for everything else
       isTextMode = true;
-      diffResult = buildTextDiff(v1, v2, { ignoreWhitespace: settings.ignoreWhitespace });
+      diffResult = buildTextDiff(v1, v2, {
+        ignoreWhitespace: settings.ignoreWhitespace,
+        ignoreCase: settings.ignoreCase,
+      });
     }
   }
 
@@ -495,7 +521,7 @@ export default function Home() {
       <Toast {...toast} />
       <ShortcutsModal open={showShortcuts} onClose={() => setShowShortcuts(false)} />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5" aria-label="Comparison editor">
         <div className="mb-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
           <EditorPanel
             label={state.left.fileName}
@@ -505,6 +531,7 @@ export default function Home() {
             onChange={(v) => handleChange("left", v)}
             onFormatChange={(f) => handleFormatChange("left", f)}
             onFormat={() => handleFormat("left")}
+            onMinify={STRUCTURED_FORMATS.includes(state.left.format) ? () => handleMinify("left") : undefined}
             onClear={() => handleClear("left")}
             onFileDrop={(f) => readFile(f, "left")}
             onFileUpload={(f) => readFile(f, "left")}
@@ -518,6 +545,7 @@ export default function Home() {
             onChange={(v) => handleChange("right", v)}
             onFormatChange={(f) => handleFormatChange("right", f)}
             onFormat={() => handleFormat("right")}
+            onMinify={STRUCTURED_FORMATS.includes(state.right.format) ? () => handleMinify("right") : undefined}
             onClear={() => handleClear("right")}
             onFileDrop={(f) => readFile(f, "right")}
             onFileUpload={(f) => readFile(f, "right")}
@@ -560,11 +588,13 @@ export default function Home() {
           </div>
         )}
 
-        <div className="overflow-hidden rounded-lg border border-border bg-bg-surface">
+        <div className="overflow-hidden rounded-lg border border-border bg-bg-surface" role="region" aria-label="Diff results">
           <div className="flex flex-wrap items-center gap-3 border-b border-border bg-bg-elevated px-3 py-2 lg:h-[42px] lg:py-0">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" role="tablist" aria-label="View mode">
               {showKeysTab && (
                 <button
+                  role="tab"
+                  aria-selected={state.activeTab === "keys"}
                   onClick={() => update({ activeTab: "keys" })}
                   className={`cursor-pointer rounded-[5px] px-3.5 py-1.5 text-xs font-medium transition-colors ${
                     state.activeTab === "keys"
@@ -576,6 +606,8 @@ export default function Home() {
                 </button>
               )}
               <button
+                role="tab"
+                aria-selected={state.activeTab === "diff" || (isTextMode && state.activeTab === "keys")}
                 onClick={() => update({ activeTab: "diff" })}
                 className={`cursor-pointer rounded-[5px] px-3.5 py-1.5 text-xs font-medium transition-colors ${
                   state.activeTab === "diff" || (isTextMode && state.activeTab === "keys")
@@ -589,6 +621,40 @@ export default function Home() {
                 <span className="ml-1 rounded bg-bg-hover px-2 py-0.5 text-[10px] text-text-muted">
                   Text mode
                 </span>
+              )}
+              {diffResult && (
+                <div className="ml-1 flex items-center rounded-[5px] border border-border" role="group" aria-label="Diff layout">
+                  <button
+                    onClick={() => updateSetting("diffViewMode", "unified")}
+                    className={`cursor-pointer rounded-l-[4px] px-2 py-1 text-[11px] transition-colors ${
+                      settings.diffViewMode === "unified"
+                        ? "bg-bg-hover text-text"
+                        : "text-text-muted hover:text-text-secondary"
+                    }`}
+                    title="Unified view"
+                    aria-label="Unified view"
+                    aria-pressed={settings.diffViewMode === "unified"}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => updateSetting("diffViewMode", "split")}
+                    className={`cursor-pointer rounded-r-[4px] px-2 py-1 text-[11px] transition-colors ${
+                      settings.diffViewMode === "split"
+                        ? "bg-bg-hover text-text"
+                        : "text-text-muted hover:text-text-secondary"
+                    }`}
+                    title="Side-by-side view"
+                    aria-label="Side-by-side view"
+                    aria-pressed={settings.diffViewMode === "split"}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" /><line x1="12" y1="3" x2="12" y2="21" />
+                    </svg>
+                  </button>
+                </div>
               )}
             </div>
             <div className="ml-auto flex items-center gap-2">
@@ -612,18 +678,32 @@ export default function Home() {
                 Format on paste
               </label>
               {isTextMode && (
-                <label
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] px-2.5 py-1 text-xs text-text-secondary transition-colors hover:bg-bg-hover"
-                  title="Ignore leading/trailing whitespace when comparing lines"
-                >
-                  <input
-                    type="checkbox"
-                    checked={settings.ignoreWhitespace}
-                    onChange={(e) => updateSetting("ignoreWhitespace", e.target.checked)}
-                    className="h-[13px] w-[13px] cursor-pointer accent-accent"
-                  />
-                  Ignore whitespace
-                </label>
+                <>
+                  <label
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] px-2.5 py-1 text-xs text-text-secondary transition-colors hover:bg-bg-hover"
+                    title="Ignore leading/trailing whitespace when comparing lines"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={settings.ignoreWhitespace}
+                      onChange={(e) => updateSetting("ignoreWhitespace", e.target.checked)}
+                      className="h-[13px] w-[13px] cursor-pointer accent-accent"
+                    />
+                    Ignore whitespace
+                  </label>
+                  <label
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] px-2.5 py-1 text-xs text-text-secondary transition-colors hover:bg-bg-hover"
+                    title="Treat uppercase and lowercase as equal"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={settings.ignoreCase}
+                      onChange={(e) => updateSetting("ignoreCase", e.target.checked)}
+                      className="h-[13px] w-[13px] cursor-pointer accent-accent"
+                    />
+                    Ignore case
+                  </label>
+                </>
               )}
               {showKeysTab && (
                 <label
@@ -661,7 +741,7 @@ export default function Home() {
               isEmpty={isEmpty}
             />
           ) : (
-            <DiffView result={diffResult} error={error} isEmpty={isEmpty} />
+            <DiffView result={diffResult} error={error} isEmpty={isEmpty} viewMode={settings.diffViewMode} />
           )}
         </div>
 

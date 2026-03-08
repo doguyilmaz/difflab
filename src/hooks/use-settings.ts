@@ -2,9 +2,13 @@
 
 import { useState, useCallback } from "react";
 
+import type { DiffViewMode } from "@/types";
+
 interface Settings {
   formatOnPaste: boolean;
   ignoreWhitespace: boolean;
+  ignoreCase: boolean;
+  diffViewMode: DiffViewMode;
 }
 
 const STORAGE_KEY = "difflab-settings";
@@ -12,6 +16,8 @@ const STORAGE_KEY = "difflab-settings";
 const defaults: Settings = {
   formatOnPaste: false,
   ignoreWhitespace: false,
+  ignoreCase: false,
+  diffViewMode: "unified",
 };
 
 function readSettings(): Settings {

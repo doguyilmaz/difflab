@@ -44,16 +44,17 @@ export function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
       <div
         ref={ref}
-        className="w-full max-w-sm rounded-xl border border-border bg-bg-surface p-5 shadow-2xl"
+        className="mx-4 w-full max-w-sm rounded-xl border border-border bg-bg-surface p-5 shadow-2xl"
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-text">Keyboard Shortcuts</h2>
+          <h2 id="shortcuts-title" className="text-sm font-semibold text-text">Keyboard Shortcuts</h2>
           <button
             onClick={onClose}
             className="cursor-pointer rounded p-1 text-text-muted transition-colors hover:text-text"
+            aria-label="Close shortcuts"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />

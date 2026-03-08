@@ -41,6 +41,7 @@ interface EditorPanelProps {
   onChange: (value: string) => void;
   onFormatChange: (format: Format) => void;
   onFormat: () => void;
+  onMinify?: () => void;
   onClear: () => void;
   onFileDrop: (file: File) => void;
   onFileUpload?: (file: File) => void;
@@ -55,6 +56,7 @@ export function EditorPanel({
   onChange,
   onFormatChange,
   onFormat,
+  onMinify,
   onClear,
   onFileDrop,
   onFileUpload,
@@ -171,6 +173,7 @@ export function EditorPanel({
           <select
             value={format}
             onChange={(e) => onFormatChange(e.target.value as Format)}
+            aria-label="File format"
             className="cursor-pointer rounded border border-border bg-bg-surface px-1.5 py-0.5 text-[11px] text-text-muted outline-none transition-colors hover:border-border-focus hover:text-text-secondary"
           >
             {ALL_FORMATS.map((f) => (
@@ -191,6 +194,7 @@ export function EditorPanel({
               onClick={handleDownload}
               className="cursor-pointer rounded px-1.5 py-1 text-text-muted transition-colors hover:bg-bg-hover hover:text-text-secondary"
               title="Download (formatted)"
+              aria-label="Download file"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
@@ -202,6 +206,7 @@ export function EditorPanel({
               onClick={handleUploadClick}
               className="cursor-pointer rounded px-1.5 py-1 text-text-muted transition-colors hover:bg-bg-hover hover:text-text-secondary"
               title="Upload file"
+              aria-label="Upload file"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
@@ -214,6 +219,14 @@ export function EditorPanel({
           >
             Format
           </button>
+          {onMinify && (
+            <button
+              onClick={onMinify}
+              className="cursor-pointer rounded px-2.5 py-1 text-xs text-text-muted transition-colors hover:bg-bg-hover hover:text-text-secondary"
+            >
+              Minify
+            </button>
+          )}
           <button
             onClick={onClear}
             className="cursor-pointer rounded px-2.5 py-1 text-xs text-text-muted transition-colors hover:bg-removed-bg hover:text-removed"

@@ -19,6 +19,12 @@ export interface PanelState {
 }
 
 export type ActiveTab = "keys" | "diff";
+export type DiffViewMode = "unified" | "split";
+
+export interface SideBySideRow {
+  left: DiffLine | null;
+  right: DiffLine | null;
+}
 
 export interface MissingKeysResult {
   [key: string]: unknown;

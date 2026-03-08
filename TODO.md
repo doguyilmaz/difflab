@@ -194,6 +194,21 @@
 
 ---
 
+## Phase 8: Final Polish
+
+- [x] Side-by-side diff view toggle (unified + split with toggle buttons)
+- [x] Ignore case toggle for text diffs
+- [x] Minify/compact button for structured formats (JSON, YAML, TOML)
+- [x] Accessibility: ARIA labels, roles, aria-selected, aria-pressed, aria-modal on all interactive elements
+- [x] Responsive design: flex-wrap toolbars, modal margins, label truncation
+
+## Deferred
+
+- [ ] Analytics integration (Vercel Analytics — decide at launch)
+- [ ] OG image (1200x630 branded preview card)
+- [ ] Auto-save toggle
+- [ ] Ignore comments toggle (strip `//`, `/* */`, `#` before diff)
+
 ## Extras (Nice-to-Have, Post-Launch)
 
 - [ ] **PWA**: service worker, offline support, installable
@@ -209,7 +224,6 @@
 - [ ] **Multiple tabs**: concurrent comparisons in separate tabs within the app
 - [ ] **Clipboard paste detection**: auto-detect format from clipboard content on paste
 - [ ] **Print-friendly styles** for diff output
-- [ ] **Side-by-side diff view** toggle (currently unified only)
 
 ---
 
